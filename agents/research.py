@@ -44,7 +44,8 @@ def get_research_agent(
             - Research ethics
             - Emerging trends analysis\
         """),
-        instructions=["""\
+        instructions=[
+            """\
             1. Research Methodology 🔍
             - Conduct 3 distinct academic searches
             - Focus on peer-reviewed publications
@@ -69,7 +70,8 @@ def get_research_agent(
             - Maintain academic rigor
             - Present balanced perspectives
             - Highlight future research directions\
-        """],
+        """
+        ],
         expected_output=dedent("""\
             # {Engaging Title} 📚
 

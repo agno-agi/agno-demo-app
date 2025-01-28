@@ -7,9 +7,9 @@ from agents.research import get_research_agent
 from agents.web_search import get_web_search_agent
 
 # Import workflows
-from workflows.blog_post_generator import BlogPostGenerator
-from workflows.investment_report_generator import InvestmentReportGenerator
-from workflows.startup_idea_validator import StartupIdeaValidator
+from workflows.blog_post_generator import get_blog_post_generator
+from workflows.investment_report_generator import get_investment_report_generator
+from workflows.startup_idea_validator import get_startup_idea_validator
 
 ######################################################
 ## Router for the agent playground
@@ -19,9 +19,9 @@ finance_agent = get_finance_agent(debug_mode=True)
 research_agent = get_research_agent(debug_mode=True)
 web_search_agent = get_web_search_agent(debug_mode=True)
 
-blog_post_generator = BlogPostGenerator(workflow_id="blog_post_generator", debug_mode=True)
-investment_report_generator = InvestmentReportGenerator(workflow_id="investment_report_generator", debug_mode=True)
-startup_idea_validator = StartupIdeaValidator(workflow_id="startup_idea_validator", debug_mode=True)
+blog_post_generator = get_blog_post_generator(debug_mode=True)
+investment_report_generator = get_investment_report_generator(debug_mode=True)
+startup_idea_validator = get_startup_idea_validator(debug_mode=True)
 
 # Create a playground instance
 playground = Playground(

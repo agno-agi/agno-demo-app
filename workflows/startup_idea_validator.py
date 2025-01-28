@@ -1,50 +1,3 @@
-"""
-🚀 Startup Idea Validator - Your Personal Business Validation Assistant!
-
-This workflow helps entrepreneurs validate their startup ideas by:
-1. Clarifying and refining the core business concept
-2. Evaluating originality compared to existing solutions
-3. Defining clear mission and objectives
-4. Conducting comprehensive market research and analysis
-
-Why is this helpful?
---------------------------------------------------------------------------------
-• Get objective feedback on your startup idea before investing resources
-• Understand your total addressable market and target segments
-• Validate assumptions about market opportunity and competition
-• Define clear mission and objectives to guide execution
-
-Who should use this?
---------------------------------------------------------------------------------
-• Entrepreneurs and Startup Founders
-• Product Managers and Business Strategists
-• Innovation Teams
-• Angel Investors and VCs doing initial screening
-
-Example use cases:
---------------------------------------------------------------------------------
-• New product/service validation
-• Market opportunity assessment
-• Competitive analysis
-• Business model validation
-• Target customer segmentation
-• Mission/vision refinement
-
-Quick Start:
---------------------------------------------------------------------------------
-1. Install dependencies:
-   pip install openai agno
-
-2. Set environment variables:
-   - OPENAI_API_KEY
-
-3. Run:
-   python startup_idea_validator.py
-
-The workflow will guide you through validating your startup idea with AI-powered
-analysis and research. Use the insights to refine your concept and business plan!
-"""
-
 import json
 from typing import Iterator, Optional
 
@@ -53,10 +6,10 @@ from agno.models.openai import OpenAIChat
 from agno.storage.workflow.postgres import PostgresWorkflowStorage
 from agno.tools.googlesearch import GoogleSearch
 from agno.utils.log import logger
-from agno.utils.pprint import pprint_run_response
 from agno.workflow import RunEvent, RunResponse, Workflow
 from pydantic import BaseModel, Field
 
+from workflows.settings import workflow_settings
 from db.session import db_url
 
 
@@ -67,26 +20,15 @@ class IdeaClarification(BaseModel):
 
 
 class MarketResearch(BaseModel):
-    total_addressable_market: str = Field(
-        ..., description="Total addressable market (TAM)."
-    )
-    serviceable_available_market: str = Field(
-        ..., description="Serviceable available market (SAM)."
-    )
-    serviceable_obtainable_market: str = Field(
-        ..., description="Serviceable obtainable market (SOM)."
-    )
+    total_addressable_market: str = Field(..., description="Total addressable market (TAM).")
+    serviceable_available_market: str = Field(..., description="Serviceable available market (SAM).")
+    serviceable_obtainable_market: str = Field(..., description="Serviceable obtainable market (SOM).")
     target_customer_segments: str = Field(..., description="Target customer segments.")
 
 
 class StartupIdeaValidator(Workflow):
-    storage: PostgresWorkflowStorage = PostgresWorkflowStorage(
-        table_name="startup_idea_validator_workflows",
-        db_url=db_url,
-    )
-
     idea_clarifier_agent: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         instructions=[
             "Given a user's startup idea, its your goal to refine that idea. ",
             "Evaluates the originality of the idea by comparing it with existing concepts. ",
@@ -100,7 +42,7 @@ class StartupIdeaValidator(Workflow):
     )
 
     market_research_agent: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[GoogleSearch()],
         instructions=[
             "You are provided with a startup idea and the company's mission and objectives. ",
@@ -116,7 +58,7 @@ class StartupIdeaValidator(Workflow):
     )
 
     competitor_analysis_agent: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[GoogleSearch()],
         instructions=[
             "You are provided with a startup idea and some market research related to the idea. ",
@@ -131,7 +73,7 @@ class StartupIdeaValidator(Workflow):
     )
 
     report_agent: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         instructions=[
             "You are provided with a startup idea and other data about the idea. ",
             "Summarise everything into a single report.",
@@ -166,9 +108,7 @@ class StartupIdeaValidator(Workflow):
         agent_input = {"startup_idea": startup_idea, **idea_clarification.model_dump()}
 
         try:
-            response: RunResponse = self.market_research_agent.run(
-                json.dumps(agent_input, indent=4)
-            )
+            response: RunResponse = self.market_research_agent.run(json.dumps(agent_input, indent=4))
 
             # Check if we got a valid response
             if not response or not response.content:
@@ -185,15 +125,11 @@ class StartupIdeaValidator(Workflow):
 
         return None
 
-    def get_competitor_analysis(
-        self, startup_idea: str, market_research: MarketResearch
-    ) -> Optional[str]:
+    def get_competitor_analysis(self, startup_idea: str, market_research: MarketResearch) -> Optional[str]:
         agent_input = {"startup_idea": startup_idea, **market_research.model_dump()}
 
         try:
-            response: RunResponse = self.competitor_analysis_agent.run(
-                json.dumps(agent_input, indent=4)
-            )
+            response: RunResponse = self.competitor_analysis_agent.run(json.dumps(agent_input, indent=4))
 
             # Check if we got a valid response
             if not response or not response.content:
@@ -210,9 +146,7 @@ class StartupIdeaValidator(Workflow):
         logger.info(f"Generating a startup validation report for: {startup_idea}")
 
         # Clarify and quantify the idea
-        idea_clarification: Optional[IdeaClarification] = self.get_idea_clarification(
-            startup_idea
-        )
+        idea_clarification: Optional[IdeaClarification] = self.get_idea_clarification(startup_idea)
 
         if idea_clarification is None:
             yield RunResponse(
@@ -222,9 +156,7 @@ class StartupIdeaValidator(Workflow):
             return
 
         # Do some market research
-        market_research: Optional[MarketResearch] = self.get_market_research(
-            startup_idea, idea_clarification
-        )
+        market_research: Optional[MarketResearch] = self.get_market_research(startup_idea, idea_clarification)
 
         if market_research is None:
             yield RunResponse(
@@ -233,9 +165,7 @@ class StartupIdeaValidator(Workflow):
             )
             return
 
-        competitor_analysis: Optional[str] = self.get_competitor_analysis(
-            startup_idea, market_research
-        )
+        competitor_analysis: Optional[str] = self.get_competitor_analysis(startup_idea, market_research)
 
         # Compile the final report
         final_response: RunResponse = self.report_agent.run(
@@ -250,6 +180,15 @@ class StartupIdeaValidator(Workflow):
             )
         )
 
-        yield RunResponse(
-            content=final_response.content, event=RunEvent.workflow_completed
-        )
+        yield RunResponse(content=final_response.content, event=RunEvent.workflow_completed)
+
+
+def get_startup_idea_validator(debug_mode: bool = False) -> StartupIdeaValidator:
+    return StartupIdeaValidator(
+        workflow_id="validate-startup-idea",
+        storage=PostgresWorkflowStorage(
+            table_name="startup_idea_validator_workflows",
+            db_url=db_url,
+        ),
+        debug_mode=debug_mode,
+    )

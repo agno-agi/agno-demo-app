@@ -9,17 +9,21 @@ dependencies = [
   "agno",
   "alembic",
   "beautifulsoup4",
-  "duckdb",
+  "duckdb", 
   "duckduckgo-search",
   "exa_py",
   "fastapi[standard]",
   "google-search-results",
+  "googlesearch-python",
+  "lxml_html_clean",
   "mypy",
   "nest_asyncio",
+  "newspaper4k",
   "openai",
   "pgvector",
   "pillow",
   "psycopg[binary]",
+  "pycountry",
   "pypdf",
   "pytest",
   "python-docx",
@@ -29,11 +33,7 @@ dependencies = [
   "typer",
   "types-beautifulsoup4",
   "types-Pillow",
-  "yfinance",
-  "newspaper4k",
-  "lxml_html_clean",
-  "googlesearch-python",
-  "pycountry",
+  "yfinance"
 ]
 
 [build-system]
@@ -61,7 +61,7 @@ plugins = ["pydantic.mypy"]
 exclude = ["aienv*", ".venv*"]
 
 [[tool.mypy.overrides]]
-module = ["pgvector.*", "setuptools.*"]
+module = ["pgvector.*", "setuptools.*", "agno.docker.*", "agno.aws.*"]
 ignore_missing_imports = true
 
 [tool.uv.pip]

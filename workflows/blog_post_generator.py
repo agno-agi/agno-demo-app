@@ -1,31 +1,3 @@
-"""🎨 Blog Post Generator - Your AI Content Creation Studio!
-
-This advanced example demonstrates how to build a sophisticated blog post generator that combines
-web research capabilities with professional writing expertise. The workflow uses a multi-stage
-approach:
-1. Intelligent web research and source gathering
-2. Content extraction and processing
-3. Professional blog post writing with proper citations
-
-Key capabilities:
-- Advanced web research and source evaluation
-- Content scraping and processing
-- Professional writing with SEO optimization
-- Automatic content caching for efficiency
-- Source attribution and fact verification
-
-Example blog topics to try:
-- "The Rise of Artificial General Intelligence: Latest Breakthroughs"
-- "How Quantum Computing is Revolutionizing Cybersecurity"
-- "Sustainable Living in 2024: Practical Tips for Reducing Carbon Footprint"
-- "The Future of Work: AI and Human Collaboration"
-- "Space Tourism: From Science Fiction to Reality"
-- "Mindfulness and Mental Health in the Digital Age"
-- "The Evolution of Electric Vehicles: Current State and Future Trends"
-
-Run `pip install openai duckduckgo-search newspaper4k lxml_html_clean sqlalchemy agno` to install dependencies.
-"""
-
 import json
 from textwrap import dedent
 from typing import Dict, Iterator, Optional
@@ -36,19 +8,17 @@ from agno.storage.workflow.postgres import PostgresWorkflowStorage
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.newspaper4k import Newspaper4kTools
 from agno.utils.log import logger
-from agno.utils.pprint import pprint_run_response
 from agno.workflow import RunEvent, RunResponse, Workflow
 from pydantic import BaseModel, Field
 
+from workflows.settings import workflow_settings
 from db.session import db_url
 
 
 class NewsArticle(BaseModel):
     title: str = Field(..., description="Title of the article.")
     url: str = Field(..., description="Link to the article.")
-    summary: Optional[str] = Field(
-        ..., description="Summary of the article if available."
-    )
+    summary: Optional[str] = Field(..., description="Summary of the article if available.")
 
 
 class SearchResults(BaseModel):
@@ -58,9 +28,7 @@ class SearchResults(BaseModel):
 class ScrapedArticle(BaseModel):
     title: str = Field(..., description="Title of the article.")
     url: str = Field(..., description="Link to the article.")
-    summary: Optional[str] = Field(
-        ..., description="Summary of the article if available."
-    )
+    summary: Optional[str] = Field(..., description="Summary of the article if available.")
     content: Optional[str] = Field(
         ...,
         description="Full article content in markdown format. None if content is unavailable.",
@@ -77,14 +45,10 @@ class BlogPostGenerator(Workflow):
     The system excels at creating content that is both informative and optimized for
     digital consumption.
     """
-    storage: PostgresWorkflowStorage = PostgresWorkflowStorage(
-        table_name="blog_post_generator_workflows",
-        db_url=db_url,
-    )
 
     # Search Agent: Handles intelligent web searching and source gathering
     searcher: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[DuckDuckGoTools()],
         description=dedent("""\
         You are BlogResearch-X, an elite research assistant specializing in discovering
@@ -116,7 +80,7 @@ class BlogPostGenerator(Workflow):
 
     # Content Scraper: Extracts and processes article content
     article_scraper: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[Newspaper4kTools()],
         description=dedent("""\
         You are ContentBot-X, a specialist in extracting and processing digital content
@@ -149,7 +113,7 @@ class BlogPostGenerator(Workflow):
 
     # Content Writer Agent: Crafts engaging blog posts from research
     writer: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         description=dedent("""\
         You are BlogMaster-X, an elite content creator combining journalistic excellence
         with digital marketing expertise. Your strengths include:
@@ -224,15 +188,11 @@ class BlogPostGenerator(Workflow):
         if use_cached_report:
             cached_blog_post = self.get_cached_blog_post(topic)
             if cached_blog_post:
-                yield RunResponse(
-                    content=cached_blog_post, event=RunEvent.workflow_completed
-                )
+                yield RunResponse(content=cached_blog_post, event=RunEvent.workflow_completed)
                 return
 
         # Search the web for articles on the topic
-        search_results: Optional[SearchResults] = self.get_search_results(
-            topic, use_search_cache
-        )
+        search_results: Optional[SearchResults] = self.get_search_results(topic, use_search_cache)
         # If no search_results are found for the topic, end the workflow
         if search_results is None or len(search_results.articles) == 0:
             yield RunResponse(
@@ -243,7 +203,7 @@ class BlogPostGenerator(Workflow):
 
         # Scrape the search results
         scraped_articles: Dict[str, ScrapedArticle] = self.scrape_articles(
-            search_results, use_scrape_cache
+            topic, search_results, use_scrape_cache
         )
 
         # Write a blog post
@@ -271,15 +231,11 @@ class BlogPostGenerator(Workflow):
         # Save the search results to the storage
         self.write_to_storage()
 
-    def get_cached_scraped_articles(
-        self, topic: str
-    ) -> Optional[Dict[str, ScrapedArticle]]:
+    def get_cached_scraped_articles(self, topic: str) -> Optional[Dict[str, ScrapedArticle]]:
         logger.info("Checking if cached scraped articles exist")
         return self.session_state.get("scraped_articles", {}).get(topic)
 
-    def add_scraped_articles_to_cache(
-        self, topic: str, scraped_articles: Dict[str, ScrapedArticle]
-    ):
+    def add_scraped_articles_to_cache(self, topic: str, scraped_articles: Dict[str, ScrapedArticle]):
         logger.info(f"Saving scraped articles for topic: {topic}")
         self.session_state.setdefault("scraped_articles", {})
         self.session_state["scraped_articles"][topic] = scraped_articles
@@ -294,12 +250,8 @@ class BlogPostGenerator(Workflow):
             try:
                 search_results_from_cache = self.get_cached_search_results(topic)
                 if search_results_from_cache is not None:
-                    search_results = SearchResults.model_validate(
-                        search_results_from_cache
-                    )
-                    logger.info(
-                        f"Found {len(search_results.articles)} articles in cache."
-                    )
+                    search_results = SearchResults.model_validate(search_results_from_cache)
+                    logger.info(f"Found {len(search_results.articles)} articles in cache.")
                     return search_results
             except Exception as e:
                 logger.warning(f"Could not read search results from cache: {e}")
@@ -314,16 +266,12 @@ class BlogPostGenerator(Workflow):
                     and isinstance(searcher_response.content, SearchResults)
                 ):
                     article_count = len(searcher_response.content.articles)
-                    logger.info(
-                        f"Found {article_count} articles on attempt {attempt + 1}"
-                    )
+                    logger.info(f"Found {article_count} articles on attempt {attempt + 1}")
                     # Cache the search results
                     self.add_search_results_to_cache(topic, searcher_response.content)
                     return searcher_response.content
                 else:
-                    logger.warning(
-                        f"Attempt {attempt + 1}/{num_attempts} failed: Invalid response type"
-                    )
+                    logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: Invalid response type")
             except Exception as e:
                 logger.warning(f"Attempt {attempt + 1}/{num_attempts} failed: {str(e)}")
 
@@ -331,7 +279,7 @@ class BlogPostGenerator(Workflow):
         return None
 
     def scrape_articles(
-        self, search_results: SearchResults, use_scrape_cache: bool
+        self, topic: str, search_results: SearchResults, use_scrape_cache: bool
     ) -> Dict[str, ScrapedArticle]:
         scraped_articles: Dict[str, ScrapedArticle] = {}
 
@@ -341,9 +289,7 @@ class BlogPostGenerator(Workflow):
                 scraped_articles_from_cache = self.get_cached_scraped_articles(topic)
                 if scraped_articles_from_cache is not None:
                     scraped_articles = scraped_articles_from_cache
-                    logger.info(
-                        f"Found {len(scraped_articles)} scraped articles in cache."
-                    )
+                    logger.info(f"Found {len(scraped_articles)} scraped articles in cache.")
                     return scraped_articles
             except Exception as e:
                 logger.warning(f"Could not read scraped articles from cache: {e}")
@@ -354,17 +300,13 @@ class BlogPostGenerator(Workflow):
                 logger.info(f"Found scraped article in cache: {article.url}")
                 continue
 
-            article_scraper_response: RunResponse = self.article_scraper.run(
-                article.url
-            )
+            article_scraper_response: RunResponse = self.article_scraper.run(article.url)
             if (
                 article_scraper_response is not None
                 and article_scraper_response.content is not None
                 and isinstance(article_scraper_response.content, ScrapedArticle)
             ):
-                scraped_articles[article_scraper_response.content.url] = (
-                    article_scraper_response.content
-                )
+                scraped_articles[article_scraper_response.content.url] = article_scraper_response.content
                 logger.info(f"Scraped article: {article_scraper_response.content.url}")
 
         # Save the scraped articles in the session state
@@ -384,3 +326,14 @@ class BlogPostGenerator(Workflow):
         yield from self.writer.run(json.dumps(writer_input, indent=4), stream=True)
         # Save the blog post in the cache
         self.add_blog_post_to_cache(topic, self.writer.run_response.content)
+
+
+def get_blog_post_generator(debug_mode: bool = False) -> BlogPostGenerator:
+    return BlogPostGenerator(
+        workflow_id="generate-blog-post-on",
+        storage=PostgresWorkflowStorage(
+            table_name="blog_post_generator_workflows",
+            db_url=db_url,
+        ),
+        debug_mode=debug_mode,
+    )

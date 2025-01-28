@@ -48,7 +48,7 @@ class ApiSettings(BaseSettings):
                 "https://app.agno.com",
                 "https://www.app.agno.com",
                 "http://localhost:3000",
-                "https://www.app-stg.agno.com"
+                "https://www.app-stg.agno.com",
             ]
         )
 

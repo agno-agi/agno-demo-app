@@ -1,5 +1,3 @@
-from os import getenv
-
 from agno.docker.app.fastapi import FastApi
 from agno.docker.app.postgres import PgVectorDb
 from agno.docker.resource.image import DockerImage
@@ -21,7 +19,7 @@ dev_image = DockerImage(
 
 # -*- Dev database running on port 5432:5432
 dev_db = PgVectorDb(
-    name=f"{WS_NAME}-db",
+    name=f"{DEV_KEY}-db",
     enabled=True,
     pg_user="api",
     pg_password="api",
@@ -33,8 +31,6 @@ dev_db = PgVectorDb(
 # -*- Build container environment
 container_env = {
     "RUNTIME_ENV": "dev",
-    # Get the OpenAI API key from the local environment
-    # "OPENAI_API_KEY": getenv("OPENAI_API_KEY"),
     "AGNO_MONITOR": "True",
     # Database configuration
     "DB_HOST": dev_db.get_db_host(),
@@ -50,7 +46,7 @@ container_env = {
 
 # -*- FastApi running on port 8000:8000
 dev_fastapi = FastApi(
-    name=WS_NAME,
+    name=DEV_KEY,
     enabled=True,
     image=dev_image,
     command="uvicorn api.main:app --reload",

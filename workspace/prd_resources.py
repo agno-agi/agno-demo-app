@@ -40,7 +40,7 @@ prd_image = DockerImage(
 
 # -*- S3 bucket for production data (set enabled=True when needed)
 prd_bucket = S3Bucket(
-    name=f"{WS_NAME}-data",
+    name=f"{PRD_KEY}-data",
     enabled=False,
     acl="private",
     skip_delete=skip_delete,
@@ -49,7 +49,7 @@ prd_bucket = S3Bucket(
 
 # -*- Secrets for production application
 prd_secret = SecretsManager(
-    name=f"{WS_NAME}-secret",
+    name=f"{PRD_KEY}-secret",
     group="api",
     # Create secret from workspace/secrets/prd_api_secrets.yml
     secret_files=[WS_ROOT.joinpath("workspace/secrets/prd_api_secrets.yml")],
@@ -58,7 +58,7 @@ prd_secret = SecretsManager(
 )
 # -*- Secrets for production database
 prd_db_secret = SecretsManager(
-    name=f"{WS_NAME}-db-secret",
+    name=f"{PRD_KEY}-db-secret",
     group="db",
     # Create secret from workspace/secrets/prd_db_secrets.yml
     secret_files=[WS_ROOT.joinpath("workspace/secrets/prd_db_secrets.yml")],
@@ -68,7 +68,7 @@ prd_db_secret = SecretsManager(
 
 # -*- Security Group for the load balancer
 prd_lb_sg = SecurityGroup(
-    name=f"{WS_NAME}-lb-security-group",
+    name=f"{PRD_KEY}-lb-security-group",
     group="api",
     description="Security group for the load balancer",
     inbound_rules=[
@@ -88,7 +88,7 @@ prd_lb_sg = SecurityGroup(
 )
 # -*- Security Group for the application
 prd_sg = SecurityGroup(
-    name=f"{WS_NAME}-security-group",
+    name=f"{PRD_KEY}-security-group",
     enabled=True,
     group="api",
     description="Security group for the production api",
@@ -106,7 +106,7 @@ prd_sg = SecurityGroup(
 # -*- Security Group for the database
 prd_db_port = 5432
 prd_db_sg = SecurityGroup(
-    name=f"{WS_NAME}-db-security-group",
+    name=f"{PRD_KEY}-db-security-group",
     enabled=True,
     group="db",
     description="Security group for the production database",
@@ -124,7 +124,7 @@ prd_db_sg = SecurityGroup(
 
 # -*- RDS Database Subnet Group
 prd_db_subnet_group = DbSubnetGroup(
-    name=f"{WS_NAME}-db-sg",
+    name=f"{PRD_KEY}-db-sg",
     enabled=True,
     group="db",
     subnet_ids=SUBNET_IDS,
@@ -134,7 +134,7 @@ prd_db_subnet_group = DbSubnetGroup(
 
 # -*- RDS Database Instance
 prd_db = DbInstance(
-    name=f"{WS_NAME}-db",
+    name=f"{PRD_KEY}-db",
     enabled=True,
     group="db",
     db_name="api",
@@ -160,7 +160,7 @@ prd_db = DbInstance(
 # -*- ECS cluster
 launch_type = "FARGATE"
 prd_ecs_cluster = EcsCluster(
-    name=f"{WS_NAME}-cluster",
+    name=f"{PRD_KEY}-cluster",
     ecs_cluster_name=WS_NAME,
     capacity_providers=[launch_type],
     skip_delete=skip_delete,
@@ -170,8 +170,6 @@ prd_ecs_cluster = EcsCluster(
 # -*- Build container environment
 container_env = {
     "RUNTIME_ENV": "prd",
-    # Get the OpenAI API key from the local environment
-    # "OPENAI_API_KEY": getenv("OPENAI_API_KEY"),
     "PHI_MONITORING": "True",
     # Database configuration
     "DB_HOST": AwsReference(prd_db.get_db_endpoint),
@@ -187,7 +185,7 @@ container_env = {
 
 # -*- FastApi running on ECS
 prd_fastapi = FastApi(
-    name=WS_NAME,
+    name=PRD_KEY,
     enabled=True,
     group="api",
     image=prd_image,
