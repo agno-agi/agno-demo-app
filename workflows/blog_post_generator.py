@@ -1,3 +1,31 @@
+"""🎨 Blog Post Generator - Your AI Content Creation Studio!
+
+This advanced example demonstrates how to build a sophisticated blog post generator that combines
+web research capabilities with professional writing expertise. The workflow uses a multi-stage
+approach:
+1. Intelligent web research and source gathering
+2. Content extraction and processing
+3. Professional blog post writing with proper citations
+
+Key capabilities:
+- Advanced web research and source evaluation
+- Content scraping and processing
+- Professional writing with SEO optimization
+- Automatic content caching for efficiency
+- Source attribution and fact verification
+
+Example blog topics to try:
+- "The Rise of Artificial General Intelligence: Latest Breakthroughs"
+- "How Quantum Computing is Revolutionizing Cybersecurity"
+- "Sustainable Living in 2024: Practical Tips for Reducing Carbon Footprint"
+- "The Future of Work: AI and Human Collaboration"
+- "Space Tourism: From Science Fiction to Reality"
+- "Mindfulness and Mental Health in the Digital Age"
+- "The Evolution of Electric Vehicles: Current State and Future Trends"
+
+Run `pip install openai duckduckgo-search newspaper4k lxml_html_clean sqlalchemy agno` to install dependencies.
+"""
+
 import json
 from textwrap import dedent
 from typing import Dict, Iterator, Optional
@@ -10,9 +38,8 @@ from agno.tools.newspaper4k import Newspaper4kTools
 from agno.utils.log import logger
 from agno.workflow import RunEvent, RunResponse, Workflow
 from pydantic import BaseModel, Field
-
-from workflows.settings import workflow_settings
 from db.session import db_url
+from workflows.settings import workflow_settings
 
 
 class NewsArticle(BaseModel):
@@ -38,13 +65,13 @@ class ScrapedArticle(BaseModel):
 class BlogPostGenerator(Workflow):
     """Advanced workflow for generating professional blog posts with proper research and citations."""
 
-    description: str = """\
+    description: str = dedent("""\
     An intelligent blog post generator that creates engaging, well-researched content.
     This workflow orchestrates multiple AI agents to research, analyze, and craft
     compelling blog posts that combine journalistic rigor with engaging storytelling.
     The system excels at creating content that is both informative and optimized for
     digital consumption.
-    """
+    """)
 
     # Search Agent: Handles intelligent web searching and source gathering
     searcher: Agent = Agent(
@@ -206,41 +233,55 @@ class BlogPostGenerator(Workflow):
             topic, search_results, use_scrape_cache
         )
 
-        # Write a blog post
-        yield from self.write_blog_post(topic, scraped_articles)
+        # Prepare the input for the writer
+        writer_input = {
+            "topic": topic,
+            "articles": [v.model_dump() for v in scraped_articles.values()],
+        }
+
+        # Run the writer and yield the response
+        yield from self.writer.run(json.dumps(writer_input, indent=4), stream=True)
+
+        # Save the blog post in the cache
+        self.add_blog_post_to_cache(topic, self.writer.run_response.content)
 
     def get_cached_blog_post(self, topic: str) -> Optional[str]:
         logger.info("Checking if cached blog post exists")
+
         return self.session_state.get("blog_posts", {}).get(topic)
 
     def add_blog_post_to_cache(self, topic: str, blog_post: str):
         logger.info(f"Saving blog post for topic: {topic}")
         self.session_state.setdefault("blog_posts", {})
         self.session_state["blog_posts"][topic] = blog_post
-        # Save the blog post to the storage
-        self.write_to_storage()
 
     def get_cached_search_results(self, topic: str) -> Optional[SearchResults]:
         logger.info("Checking if cached search results exist")
-        return self.session_state.get("search_results", {}).get(topic)
+        search_results = self.session_state.get("search_results", {}).get(topic)
+        return (
+            SearchResults.model_validate(search_results)
+            if search_results and isinstance(search_results, dict)
+            else search_results
+        )
 
     def add_search_results_to_cache(self, topic: str, search_results: SearchResults):
         logger.info(f"Saving search results for topic: {topic}")
         self.session_state.setdefault("search_results", {})
-        self.session_state["search_results"][topic] = search_results.model_dump()
-        # Save the search results to the storage
-        self.write_to_storage()
+        self.session_state["search_results"][topic] = search_results
 
     def get_cached_scraped_articles(self, topic: str) -> Optional[Dict[str, ScrapedArticle]]:
         logger.info("Checking if cached scraped articles exist")
-        return self.session_state.get("scraped_articles", {}).get(topic)
+        scraped_articles = self.session_state.get("scraped_articles", {}).get(topic)
+        return (
+            ScrapedArticle.model_validate(scraped_articles)
+            if scraped_articles and isinstance(scraped_articles, dict)
+            else scraped_articles
+        )
 
     def add_scraped_articles_to_cache(self, topic: str, scraped_articles: Dict[str, ScrapedArticle]):
         logger.info(f"Saving scraped articles for topic: {topic}")
         self.session_state.setdefault("scraped_articles", {})
         self.session_state["scraped_articles"][topic] = scraped_articles
-        # Save the scraped articles to the storage
-        self.write_to_storage()
 
     def get_search_results(
         self, topic: str, use_search_cache: bool, num_attempts: int = 3
@@ -313,19 +354,19 @@ class BlogPostGenerator(Workflow):
         self.add_scraped_articles_to_cache(topic, scraped_articles)
         return scraped_articles
 
-    def write_blog_post(
-        self, topic: str, scraped_articles: Dict[str, ScrapedArticle]
-    ) -> Iterator[RunResponse]:
-        logger.info("Writing blog post")
-        # Prepare the input for the writer
-        writer_input = {
-            "topic": topic,
-            "articles": [v.model_dump() for v in scraped_articles.values()],
-        }
-        # Run the writer and yield the response
-        yield from self.writer.run(json.dumps(writer_input, indent=4), stream=True)
-        # Save the blog post in the cache
-        self.add_blog_post_to_cache(topic, self.writer.run_response.content)
+
+# Run the workflow if the script is executed directly
+def write_blog_post(self, topic: str, scraped_articles: Dict[str, ScrapedArticle]) -> Iterator[RunResponse]:
+    logger.info("Writing blog post")
+    # Prepare the input for the writer
+    writer_input = {
+        "topic": topic,
+        "articles": [v.model_dump() for v in scraped_articles.values()],
+    }
+    # Run the writer and yield the response
+    yield from self.writer.run(json.dumps(writer_input, indent=4), stream=True)
+    # Save the blog post in the cache
+    self.add_blog_post_to_cache(topic, self.writer.run_response.content)
 
 
 def get_blog_post_generator(debug_mode: bool = False) -> BlogPostGenerator:
