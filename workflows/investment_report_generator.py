@@ -1,50 +1,15 @@
-"""💰 Investment Report Generator - Your AI Financial Analysis Studio!
-
-This advanced example demonstrates how to build a sophisticated investment analysis system that combines
-market research, financial analysis, and portfolio management. The workflow uses a three-stage
-approach:
-1. Comprehensive stock analysis and market research
-2. Investment potential evaluation and ranking
-3. Strategic portfolio allocation recommendations
-
-Key capabilities:
-- Real-time market data analysis
-- Professional financial research
-- Investment risk assessment
-- Portfolio allocation strategy
-- Detailed investment rationale
-
-Example companies to analyze:
-- "AAPL, MSFT, GOOGL" (Tech Giants)
-- "NVDA, AMD, INTC" (Semiconductor Leaders)
-- "TSLA, F, GM" (Automotive Innovation)
-- "JPM, BAC, GS" (Banking Sector)
-- "AMZN, WMT, TGT" (Retail Competition)
-- "PFE, JNJ, MRNA" (Healthcare Focus)
-- "XOM, CVX, BP" (Energy Sector)
-
-Run `pip install openai yfinance agno` to install dependencies.
-"""
-
-from pathlib import Path
-from shutil import rmtree
 from textwrap import dedent
 from typing import Iterator
 
 from agno.agent import Agent, RunResponse
+from agno.models.openai import OpenAIChat
 from agno.storage.workflow.postgres import PostgresWorkflowStorage
 from agno.tools.yfinance import YFinanceTools
 from agno.utils.log import logger
 from agno.workflow import Workflow
-from db.session import db_url
 
-reports_dir = Path(__file__).parent.joinpath("reports", "investment")
-if reports_dir.is_dir():
-    rmtree(path=reports_dir, ignore_errors=True)
-reports_dir.mkdir(parents=True, exist_ok=True)
-stock_analyst_report = str(reports_dir.joinpath("stock_analyst_report.md"))
-research_analyst_report = str(reports_dir.joinpath("research_analyst_report.md"))
-investment_report = str(reports_dir.joinpath("investment_report.md"))
+from workflows.settings import workflow_settings
+from db.session import db_url
 
 
 class InvestmentReportGenerator(Workflow):
@@ -60,6 +25,7 @@ class InvestmentReportGenerator(Workflow):
 
     stock_analyst: Agent = Agent(
         name="Stock Analyst",
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[YFinanceTools(company_info=True, analyst_recommendations=True, company_news=True)],
         description=dedent("""\
         You are MarketMaster-X, an elite Senior Investment Analyst at Goldman Sachs with expertise in:
@@ -90,11 +56,11 @@ class InvestmentReportGenerator(Workflow):
         Note: This analysis is for educational purposes only.\
         """),
         expected_output="Comprehensive market analysis report in markdown format",
-        save_response_to_file=stock_analyst_report,
     )
 
     research_analyst: Agent = Agent(
         name="Research Analyst",
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         description=dedent("""\
         You are ValuePro-X, an elite Senior Research Analyst at Goldman Sachs specializing in:
 
@@ -122,11 +88,11 @@ class InvestmentReportGenerator(Workflow):
            - Explain competitive advantages\
         """),
         expected_output="Detailed investment analysis and ranking report in markdown format",
-        save_response_to_file=research_analyst_report,
     )
 
     investment_lead: Agent = Agent(
         name="Investment Lead",
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         description=dedent("""\
         You are PortfolioSage-X, a distinguished Senior Investment Lead at Goldman Sachs expert in:
 
@@ -153,7 +119,6 @@ class InvestmentReportGenerator(Workflow):
            - Provide actionable insights
            - Include risk considerations\
         """),
-        save_response_to_file=investment_report,
     )
 
     def run(self, companies: str) -> Iterator[RunResponse]:
@@ -174,9 +139,6 @@ class InvestmentReportGenerator(Workflow):
 
         logger.info("Reviewing the research report and producing an investment proposal.")
         yield from self.investment_lead.run(ranked_companies.content, stream=True)
-
-
-# Run the workflow if the script is executed directly
 
 
 def get_investment_report_generator(debug_mode: bool = False) -> InvestmentReportGenerator:

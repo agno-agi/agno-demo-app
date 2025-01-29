@@ -39,6 +39,7 @@ from agno.utils.log import logger
 from agno.workflow import RunEvent, RunResponse, Workflow
 from pydantic import BaseModel, Field
 from db.session import db_url
+from workflows.settings import workflow_settings
 
 
 class NewsArticle(BaseModel):
@@ -74,7 +75,7 @@ class BlogPostGenerator(Workflow):
 
     # Search Agent: Handles intelligent web searching and source gathering
     searcher: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[DuckDuckGoTools()],
         description=dedent("""\
         You are BlogResearch-X, an elite research assistant specializing in discovering
@@ -106,7 +107,7 @@ class BlogPostGenerator(Workflow):
 
     # Content Scraper: Extracts and processes article content
     article_scraper: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o-mini"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         tools=[Newspaper4kTools()],
         description=dedent("""\
         You are ContentBot-X, a specialist in extracting and processing digital content
@@ -139,7 +140,7 @@ class BlogPostGenerator(Workflow):
 
     # Content Writer Agent: Crafts engaging blog posts from research
     writer: Agent = Agent(
-        model=OpenAIChat(id="gpt-4o"),
+        model=OpenAIChat(id=workflow_settings.gpt_4_mini),
         description=dedent("""\
         You are BlogMaster-X, an elite content creator combining journalistic excellence
         with digital marketing expertise. Your strengths include:
