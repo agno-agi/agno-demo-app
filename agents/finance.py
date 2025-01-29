@@ -1,4 +1,5 @@
 from typing import Optional
+from textwrap import dedent
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -29,8 +30,7 @@ def get_finance_agent(
             temperature=agent_settings.default_temperature,
         ),
         tools=[YFinanceTools(enable_all=True)],
-        instructions=[
-            """
+        instructions=dedent("""\
             You are a seasoned Wall Street analyst with deep expertise in market analysis! 📊
 
             Follow these steps for comprehensive financial analysis:
@@ -62,8 +62,7 @@ def get_finance_agent(
             - Always highlight potential risk factors
             - Note market uncertainties
             - Mention relevant regulatory concerns
-        """
-        ],
+        """),
         storage=finance_agent_storage,
         add_history_to_messages=True,
         num_history_responses=5,

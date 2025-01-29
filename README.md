@@ -14,26 +14,24 @@ This repo contains the code for running agno demo app in 2 environments:
 2. Install workspace and activate the virtual env:
 
 ```sh
-./scripts/install.sh
+./scripts/dev_setup.sh
 source .venv/bin/activate
 ```
 
-3. Setup workspace:
+Optional: Install agno-sdk in editable mode:
 
 ```sh
-ag ws setup
+VIRTUAL_ENV=.venv
+AGNO_DIR=../phidata # Or wherever your agno-sdk is located
+uv pip install -e ${AGNO_DIR}/libs/agno
+uv pip install -e ${AGNO_DIR}/libs/infra/agno_docker
+uv pip install -e ${AGNO_DIR}/libs/infra/agno_aws
 ```
 
-4. Copy `workspace/example_secrets` to `workspace/secrets`:
+3. Copy `workspace/example_secrets` to `workspace/secrets`:
 
 ```sh
 cp -r workspace/example_secrets workspace/secrets
-```
-
-5. Optional: Create `.env` file:
-
-```sh
-cp example.env .env
 ```
 
 ## Run Demo App locally

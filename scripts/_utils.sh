@@ -14,6 +14,6 @@ print_heading() {
   print_horizontal_line
 }
 
-print_status() {
+print_info() {
   echo "-*- $1"
 }

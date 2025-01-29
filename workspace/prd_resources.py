@@ -18,12 +18,14 @@ from workspace.settings import (
     WS_ROOT,
     SUBNET_IDS,
     AWS_AZ1,
+    AWS_REGION,
+    AWS_PROFILE,
 )
 
 #
-# -*- Resources for the Production Environment
+# -*- AWS resources for the production environment
 #
-# Skip resource deletion when running `ag ws down` (set to True after initial deployment)
+# Skip resource deletion when running `agno ws down`
 skip_delete: bool = False
 # Save resource outputs to workspace/outputs
 save_output: bool = True
@@ -140,11 +142,9 @@ prd_db = DbInstance(
     db_name="api",
     port=prd_db_port,
     engine="postgres",
-    engine_version="16.1",
+    engine_version="17.2",
     allocated_storage=64,
-    # NOTE: For production, use a larger instance type.
-    # Last checked price: ~$25 per month
-    db_instance_class="db.t4g.small",
+    db_instance_class="db.r6g.large",
     db_security_groups=[prd_db_sg],
     db_subnet_group=prd_db_subnet_group,
     availability_zone=AWS_AZ1,
@@ -224,6 +224,8 @@ prd_docker_resources = DockerResources(
 # -*- Production AwsResources
 prd_aws_config = AwsResources(
     env=PRD_ENV,
+    aws_region=AWS_REGION,
+    aws_profile=AWS_PROFILE,
     apps=[prd_fastapi],
     resources=(
         prd_lb_sg,

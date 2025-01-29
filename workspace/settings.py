@@ -18,6 +18,8 @@ PRD_KEY = f"{WS_NAME}-{PRD_ENV}"
 # AWS settings
 # Region for AWS resources
 AWS_REGION = "us-east-1"
+# AWS profile for the ai-demos account
+AWS_PROFILE = "ai-demos"
 
 # Availability Zones for AWS resources
 AWS_AZ1 = "us-east-1a"
@@ -28,7 +30,7 @@ SUBNET_IDS = ["subnet-067b9140c018160f6", "subnet-0f3ba3094301af603"]
 
 # Image Settings
 # Repository for images
-IMAGE_REPO = "agnoagi"
+IMAGE_REPO = "agnohq"
 
 # Build images locally
 BUILD_IMAGES = True
