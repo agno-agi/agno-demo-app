@@ -269,7 +269,7 @@ class BlogPostGenerator(Workflow):
         self.session_state.setdefault("search_results", {})
         self.session_state["search_results"][topic] = search_results
 
-    def get_cached_scraped_articles(self, topic: str) -> Optional[Dict[str, ScrapedArticle]]:
+    def get_cached_scraped_articles(self, topic: str):
         logger.info("Checking if cached scraped articles exist")
         scraped_articles = self.session_state.get("scraped_articles", {}).get(topic)
         return (

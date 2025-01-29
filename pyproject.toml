@@ -61,7 +61,7 @@ plugins = ["pydantic.mypy"]
 exclude = ["aienv*", ".venv*"]
 
 [[tool.mypy.overrides]]
-module = ["pgvector.*", "setuptools.*", "agno.docker.*", "agno.aws.*"]
+module = ["pgvector.*", "setuptools.*", "agno.*", "agno.docker.*", "agno.aws.*"]
 ignore_missing_imports = true
 
 [tool.uv.pip]
