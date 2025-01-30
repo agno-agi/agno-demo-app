@@ -42,20 +42,14 @@ class ApiSettings(BaseSettings):
     def set_cors_origin_list(cls, cors_origin_list, info: FieldValidationInfo):
         valid_cors = cors_origin_list or []
 
-        # Add phidata to cors origin list
+        # Add app.agno.com to cors origin list
         valid_cors.extend(
             [
-                "https://app.agno.com",
-                "https://www.app.agno.com",
                 "http://localhost:3000",
-                "https://www.app-stg.agno.com",
+                "https://app.agno.com",
+                "https://app-stg.agno.com",
             ]
         )
-
-        runtime_env = info.data.get("runtime_env")
-        if runtime_env == "dev":
-            # 3000 is the default port for create-react-app
-            valid_cors.extend(["http://localhost", "http://localhost:3000", "https://www.app-stg.agno.com"])
 
         return valid_cors
 
