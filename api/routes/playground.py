@@ -26,7 +26,7 @@ startup_idea_validator = get_startup_idea_validator(debug_mode=True)
 
 # Create a playground instance
 playground = Playground(
-    agents=[web_search_agent, research_agent, finance_agent, simple_agent],
+    agents=[simple_agent,web_search_agent, research_agent, finance_agent],
     workflows=[blog_post_generator, investment_report_generator, startup_idea_validator],
 )
 # Log the playground endpoint with phidata.app
