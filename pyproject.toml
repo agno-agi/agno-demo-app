@@ -23,6 +23,8 @@ dependencies = [
   "pgvector",
   "pillow",
   "psycopg[binary]",
+  "pydantic",
+  "pydantic-settings",
   "pycountry",
   "pypdf",
   "pytest",

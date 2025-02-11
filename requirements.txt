@@ -61,6 +61,7 @@ psycopg-binary==3.2.4
 pycountry==24.6.1
 pydantic==2.10.6
 pydantic-core==2.27.2
+pydantic-settings==2.7.1
 pygments==2.19.1
 pypdf==5.2.0
 pytest==8.3.4
