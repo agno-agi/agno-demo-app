@@ -121,7 +121,7 @@ class InvestmentReportGenerator(Workflow):
         """),
     )
 
-    def run(self, companies: str) -> Iterator[RunResponse]:
+    def run(self, companies: str) -> Iterator[RunResponse]:  # type: ignore
         logger.info(f"Getting investment reports for companies: {companies}")
         initial_report: RunResponse = self.stock_analyst.run(companies)
         if initial_report is None or not initial_report.content:

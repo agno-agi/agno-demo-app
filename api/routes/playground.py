@@ -6,6 +6,7 @@ from agents.finance import get_finance_agent
 from agents.research import get_research_agent
 from agents.web_search import get_web_search_agent
 from agents.simple_agent import get_simple_agent
+
 # Import workflows
 from workflows.blog_post_generator import get_blog_post_generator
 from workflows.investment_report_generator import get_investment_report_generator
@@ -26,7 +27,7 @@ startup_idea_validator = get_startup_idea_validator(debug_mode=True)
 
 # Create a playground instance
 playground = Playground(
-    agents=[simple_agent,web_search_agent, research_agent, finance_agent],
+    agents=[simple_agent, web_search_agent, research_agent, finance_agent],
     workflows=[blog_post_generator, investment_report_generator, startup_idea_validator],
 )
 # Log the playground endpoint with phidata.app
