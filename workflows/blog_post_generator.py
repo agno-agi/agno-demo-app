@@ -202,7 +202,7 @@ class BlogPostGenerator(Workflow):
         markdown=True,
     )
 
-    def run(
+    def run(  # type: ignore
         self,
         topic: str,
         use_search_cache: bool = True,
@@ -243,7 +243,8 @@ class BlogPostGenerator(Workflow):
         yield from self.writer.run(json.dumps(writer_input, indent=4), stream=True)
 
         # Save the blog post in the cache
-        self.add_blog_post_to_cache(topic, self.writer.run_response.content)
+        if self.writer.run_response:
+            self.add_blog_post_to_cache(topic, str(self.writer.run_response.content))
 
     def get_cached_blog_post(self, topic: str) -> Optional[str]:
         logger.info("Checking if cached blog post exists")

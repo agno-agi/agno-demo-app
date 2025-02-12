@@ -4,7 +4,7 @@ from typing import Iterator, Optional
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.workflow.postgres import PostgresWorkflowStorage
-from agno.tools.googlesearch import GoogleSearch
+from agno.tools.googlesearch import GoogleSearchTools
 from agno.utils.log import logger
 from agno.workflow import RunEvent, RunResponse, Workflow
 from pydantic import BaseModel, Field
@@ -43,7 +43,7 @@ class StartupIdeaValidator(Workflow):
 
     market_research_agent: Agent = Agent(
         model=OpenAIChat(id=workflow_settings.gpt_4_mini),
-        tools=[GoogleSearch()],
+        tools=[GoogleSearchTools()],
         instructions=[
             "You are provided with a startup idea and the company's mission and objectives. ",
             "Estimate the total addressable market (TAM), serviceable available market (SAM), and serviceable obtainable market (SOM). ",
@@ -59,7 +59,7 @@ class StartupIdeaValidator(Workflow):
 
     competitor_analysis_agent: Agent = Agent(
         model=OpenAIChat(id=workflow_settings.gpt_4_mini),
-        tools=[GoogleSearch()],
+        tools=[GoogleSearchTools()],
         instructions=[
             "You are provided with a startup idea and some market research related to the idea. ",
             "Identify existing competitors in the market. ",
@@ -142,7 +142,7 @@ class StartupIdeaValidator(Workflow):
 
         return None
 
-    def run(self, startup_idea: str) -> Iterator[RunResponse]:
+    def run(self, startup_idea: str) -> Iterator[RunResponse]:  # type: ignore
         logger.info(f"Generating a startup validation report for: {startup_idea}")
 
         # Clarify and quantify the idea
