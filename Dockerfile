@@ -1,4 +1,4 @@
-FROM phidata/python:3.12
+FROM agnohq/python:3.12
 
 ARG USER=app
 ARG APP_DIR=/app
