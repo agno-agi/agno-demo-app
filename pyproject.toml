@@ -7,7 +7,12 @@ authors = [{ name = "Agno Team", email = "hello@agno.com" }]
 
 dependencies = [
   "agno-aws==0.0.1",
+<<<<<<< HEAD
   "agno==1.1.4",
+=======
+  "agno-docker==0.0.1",
+  "agno==1.1.0",
+>>>>>>> eeff87735ba8797fc4f2e5701df1b750b7494e6f
   "alembic",
   "beautifulsoup4",
   "duckdb",

@@ -2,6 +2,7 @@
 #    ./scripts/generate_requirements.sh
 agno==1.1.4
 agno-aws==0.0.1
+agno-docker==0.0.1
 alembic==1.14.1
 annotated-types==0.7.0
 anyio==4.8.0
@@ -13,6 +14,7 @@ charset-normalizer==3.4.1
 click==8.1.8
 distro==1.9.0
 dnspython==2.7.0
+docker==7.1.0
 docstring-parser==0.16
 duckdb==1.1.3
 duckduckgo-search==7.3.0

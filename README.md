@@ -22,7 +22,7 @@ Optional: Install agno-sdk in editable mode:
 
 ```sh
 VIRTUAL_ENV=.venv
-AGNO_DIR=../phidata # Or wherever your agno-sdk is located
+AGNO_DIR=../agno # Or wherever your agno-sdk is located
 uv pip install -e ${AGNO_DIR}/libs/agno
 uv pip install -e ${AGNO_DIR}/libs/infra/agno_docker
 uv pip install -e ${AGNO_DIR}/libs/infra/agno_aws
