@@ -48,6 +48,7 @@ class ApiSettings(BaseSettings):
                 "http://localhost:3000",
                 "https://app.agno.com",
                 "https://app-stg.agno.com",
+                "https://agno-agent-ui.vercel.app",
                 # Add more here if you are not hosting on localhost
             ]
         )
