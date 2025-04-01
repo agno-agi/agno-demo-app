@@ -1,7 +1,7 @@
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.team.team import Team
-from agno.storage import PostgresStorage
+from agno.storage.postgres import PostgresStorage
 from db.session import db_url
 
 japanese_agent = Agent(
