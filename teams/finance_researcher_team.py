@@ -26,7 +26,7 @@ finance_agent = get_finance_agent(debug_mode=True)
 def get_finance_researcher_team():
     return Team(
         name="Finance Researcher Team",
-        agents=[web_agent, finance_agent],
+        members=[web_agent, finance_agent],
         instructions=[
             "You are a team of finance researchers!",
         ],
