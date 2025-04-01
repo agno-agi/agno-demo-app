@@ -34,7 +34,6 @@ def get_finance_researcher_team():
         success_criteria="A good financial research report.",
         enable_agentic_context=True,
         expected_output="A good financial research report.",
-        context="use USD as currency",
         storage=PostgresStorage(
             table_name="finance_researcher_team",
             db_url=db_url,
