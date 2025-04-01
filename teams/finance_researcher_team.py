@@ -10,7 +10,7 @@ web_agent = Agent(
     name="Web Agent",
     role="Search the web for information",
     model=OpenAIChat(id="gpt-4o"),
-    tools=[DuckDuckGoTools()],
+    tools=[DuckDuckGoTools(cache_results=True)],
     agent_id="web_agent",
     instructions=[
         "You are an experienced web researcher and news analyst!",
@@ -26,6 +26,7 @@ finance_agent = get_finance_agent(debug_mode=True)
 def get_finance_researcher_team():
     return Team(
         name="Finance Researcher Team",
+        mode="route",
         members=[web_agent, finance_agent],
         instructions=[
             "You are a team of finance researchers!",
