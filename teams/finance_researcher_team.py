@@ -13,7 +13,7 @@ web_agent = Agent(
     tools=[DuckDuckGoTools()],
     agent_id="web_agent",
     instructions=[
-        "You are an experienced web researcher and news analyst! 🔍",
+        "You are an experienced web researcher and news analyst!",
     ],
     show_tool_calls=True,
     markdown=True,
@@ -28,7 +28,7 @@ def get_finance_researcher_team():
         name="Finance Researcher Team",
         agents=[web_agent, finance_agent],
         instructions=[
-            "You are a team of finance researchers! 📊",
+            "You are a team of finance researchers!",
         ],
         model=OpenAIChat(id="gpt-4o"),
         success_criteria="A good financial research report.",
