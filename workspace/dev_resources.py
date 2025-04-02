@@ -42,7 +42,7 @@ container_env = {
     # Wait for database to be available before starting the application
     "WAIT_FOR_DB": True,
     # Migrate database on startup using alembic
-    # "MIGRATE_DB": ws_settings.prd_db_enabled,
+    "MIGRATE_DB": True,
 }
 
 # -*- FastApi running on port 8000:8000
