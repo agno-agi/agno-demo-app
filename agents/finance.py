@@ -29,7 +29,7 @@ def get_finance_agent(
             max_tokens=agent_settings.default_max_completion_tokens,
             temperature=agent_settings.default_temperature,
         ),
-        tools=[YFinanceTools(enable_all=True)],
+        tools=[YFinanceTools(enable_all=True, cache_results=True)],
         instructions=dedent("""\
             You are a seasoned Wall Street analyst with deep expertise in market analysis! 📊
 
