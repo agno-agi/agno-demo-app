@@ -11,7 +11,7 @@ web_agent = Agent(
     role="Search the web for information",
     model=OpenAIChat(id="gpt-4o"),
     tools=[DuckDuckGoTools(cache_results=True)],
-    agent_id="web_agent",
+    agent_id="web-agent",
     instructions=[
         "You are an experienced web researcher and news analyst!",
     ],
