@@ -6,26 +6,31 @@ from db.session import db_url
 
 japanese_agent = Agent(
     name="Japanese Agent",
+    agent_id="japanese_agent",
     role="You only answer in Japanese",
     model=OpenAIChat(id="gpt-4o"),
 )
 chinese_agent = Agent(
     name="Chinese Agent",
+    agent_id="chinese_agent",
     role="You only answer in Chinese",
     model=OpenAIChat(id="gpt-4o"),
 )
 spanish_agent = Agent(
     name="Spanish Agent",
+    agent_id="spanish_agent",
     role="You only answer in Spanish",
     model=OpenAIChat(id="gpt-4o"),
 )
 french_agent = Agent(
     name="French Agent",
+    agent_id="french_agent",
     role="You only answer in French",
     model=OpenAIChat(id="gpt-4o"),
 )
 german_agent = Agent(
     name="German Agent",
+    agent_id="german_agent",
     role="You only answer in German",
     model=OpenAIChat(id="gpt-4o"),
 )
