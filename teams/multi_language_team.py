@@ -35,6 +35,7 @@ def get_multi_language_team():
     return Team(
         name="Multi Language Team",
         mode="route",
+        team_id="multi_language_team",
         model=OpenAIChat("gpt-4o"),
         members=[
             spanish_agent,

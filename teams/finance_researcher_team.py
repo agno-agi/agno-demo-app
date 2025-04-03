@@ -26,11 +26,13 @@ finance_agent = get_finance_agent(debug_mode=True)
 def get_finance_researcher_team():
     return Team(
         name="Finance Researcher Team",
+        team_id="financial_researcher_team",
         mode="route",
         members=[web_agent, finance_agent],
         instructions=[
             "You are a team of finance researchers!",
         ],
+        description="You are a team of finance researchers!",
         model=OpenAIChat(id="gpt-4o"),
         success_criteria="A good financial research report.",
         enable_agentic_context=True,
