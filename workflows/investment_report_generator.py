@@ -147,6 +147,7 @@ def get_investment_report_generator(debug_mode: bool = False) -> InvestmentRepor
         storage=PostgresWorkflowStorage(
             table_name="investment_report_generator_workflows",
             db_url=db_url,
+            auto_upgrade_schema=True,
         ),
         debug_mode=debug_mode,
     )

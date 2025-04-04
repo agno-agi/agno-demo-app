@@ -8,7 +8,7 @@ from agents.settings import agent_settings
 from db.session import db_url
 
 
-basic_agent_storage = PostgresAgentStorage(table_name="simple_agent", db_url=db_url)
+basic_agent_storage = PostgresAgentStorage(table_name="simple_agent", db_url=db_url, auto_upgrade_schema=True)
 
 
 def get_basic_agent(

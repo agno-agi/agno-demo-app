@@ -376,6 +376,7 @@ def get_blog_post_generator(debug_mode: bool = False) -> BlogPostGenerator:
         storage=PostgresWorkflowStorage(
             table_name="blog_post_generator_workflows",
             db_url=db_url,
+            auto_upgrade_schema=True,
         ),
         debug_mode=debug_mode,
     )

@@ -189,6 +189,7 @@ def get_startup_idea_validator(debug_mode: bool = False) -> StartupIdeaValidator
         storage=PostgresWorkflowStorage(
             table_name="startup_idea_validator_workflows",
             db_url=db_url,
+            auto_upgrade_schema=True,
         ),
         debug_mode=debug_mode,
     )

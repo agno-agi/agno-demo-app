@@ -10,7 +10,7 @@ from agno.storage.agent.postgres import PostgresAgentStorage
 from agents.settings import agent_settings
 from db.session import db_url
 
-research_agent_storage = PostgresAgentStorage(table_name="research_agent", db_url=db_url)
+research_agent_storage = PostgresAgentStorage(table_name="research_agent", db_url=db_url, auto_upgrade_schema=True)
 
 
 def get_research_agent(
