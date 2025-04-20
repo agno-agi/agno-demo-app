@@ -1,7 +1,6 @@
 from textwrap import dedent
 
 from agno.agent import Agent
-from agno.models.anthropic import Claude
 from agno.models.openai import OpenAIChat
 from agno.team.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
@@ -35,10 +34,10 @@ finance_agent = Agent(
 )
 
 def get_reasoning_finance_team():
-    team_leader = Team(
-        name="Reasoning Finance Team Leader",
+    return Team(
+        name="Reasoning Finance Team",
         mode="coordinate",
-        model=Claude(id="claude-3-7-sonnet-latest"),
+        model=OpenAIChat(id="gpt-4o"),
         members=[
             web_agent,
             finance_agent,
