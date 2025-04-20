@@ -4,8 +4,10 @@ from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.reasoning import ReasoningTools
 
-reasoning_agent = Agent(
-    model=OpenAIChat(id="gpt-4o"),
+
+def get_reasoning_agent():
+    return Agent(
+        model=OpenAIChat(id="gpt-4o"),
     tools=[ReasoningTools(add_instructions=True)],
     instructions=dedent("""\
         You are an expert problem-solving assistant with strong analytical skills! 🧠
