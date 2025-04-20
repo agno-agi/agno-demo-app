@@ -7,7 +7,7 @@ from agents.research import get_research_agent
 from agents.web_search import get_web_search_agent
 from agents.basic_agent import get_basic_agent
 from agents.reasoning_agent import get_reasoning_agent
-
+from agents.memory_agent import get_memory_agent
 # Import workflows
 from workflows.blog_post_generator import get_blog_post_generator
 from workflows.investment_report_generator import get_investment_report_generator
@@ -27,6 +27,7 @@ research_agent = get_research_agent(debug_mode=True)
 web_search_agent = get_web_search_agent(debug_mode=True)
 basic_agent = get_basic_agent(debug_mode=True)
 reasoning_agent = get_reasoning_agent(debug_mode=True)
+memory_agent = get_memory_agent(debug_mode=True)
 
 # Workflows
 blog_post_generator = get_blog_post_generator(debug_mode=True)
@@ -40,7 +41,7 @@ reasoning_finance_team = get_reasoning_finance_team()
 
 # Create a playground instance
 playground = Playground(
-    agents=[basic_agent, web_search_agent, research_agent, finance_agent, reasoning_agent],
+    agents=[basic_agent, web_search_agent, research_agent, finance_agent, reasoning_agent, memory_agent],
     workflows=[blog_post_generator, investment_report_generator, startup_idea_validator],
     teams=[finance_researcher_team, multi_language_team, reasoning_finance_team],
 )
