@@ -43,9 +43,9 @@ def get_reasoning_agent(debug_mode: bool = False):
             - Address value considerations
             \
         """),
-            add_datetime_to_instructions=True,
-            stream_intermediate_steps=True,
-            show_tool_calls=True,
-            markdown=True,
-            debug_mode=debug_mode,
-        )
+        add_datetime_to_instructions=True,
+        stream_intermediate_steps=True,
+        show_tool_calls=True,
+        markdown=True,
+        debug_mode=debug_mode,
+    )

@@ -1,5 +1,3 @@
-from textwrap import dedent
-
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.team.team import Team
@@ -20,9 +18,7 @@ finance_agent = Agent(
     name="Finance Agent",
     role="Handle financial data requests",
     model=OpenAIChat(id="gpt-4o-mini"),
-    tools=[
-        YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)
-    ],
+    tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True)],
     instructions=[
         "You are a financial data specialist. Provide concise and accurate data.",
         "Use tables to display stock prices, fundamentals (P/E, Market Cap), and recommendations.",
@@ -32,6 +28,7 @@ finance_agent = Agent(
     ],
     add_datetime_to_instructions=True,
 )
+
 
 def get_reasoning_finance_team():
     return Team(

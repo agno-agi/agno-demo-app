@@ -7,6 +7,7 @@ from agents.research import get_research_agent
 from agents.web_search import get_web_search_agent
 from agents.basic_agent import get_basic_agent
 from agents.reasoning_agent import get_reasoning_agent
+
 # Import workflows
 from workflows.blog_post_generator import get_blog_post_generator
 from workflows.investment_report_generator import get_investment_report_generator
@@ -27,7 +28,7 @@ web_search_agent = get_web_search_agent(debug_mode=True)
 basic_agent = get_basic_agent(debug_mode=True)
 reasoning_agent = get_reasoning_agent(debug_mode=True)
 
-# Workflows 
+# Workflows
 blog_post_generator = get_blog_post_generator(debug_mode=True)
 investment_report_generator = get_investment_report_generator(debug_mode=True)
 startup_idea_validator = get_startup_idea_validator(debug_mode=True)
