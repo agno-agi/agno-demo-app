@@ -6,7 +6,8 @@ readme = "README.md"
 authors = [{ name = "Agno Team", email = "hello@agno.com" }]
 
 dependencies = [
-  "agno[aws]==1.2.4",
+  "anthropic",
+  "agno[aws]==1.4.6",
   "alembic",
   "beautifulsoup4",
   "duckdb",

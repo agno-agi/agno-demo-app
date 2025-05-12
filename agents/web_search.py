@@ -4,12 +4,14 @@ from typing import Optional
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.serpapi import SerpApiTools
-from agno.storage.agent.postgres import PostgresAgentStorage
+from agno.storage.postgres import PostgresStorage
 
 from agents.settings import agent_settings
 from db.session import db_url
 
-web_search_agent_storage = PostgresAgentStorage(table_name="web_search_agent", db_url=db_url, auto_upgrade_schema=True)
+web_search_agent_storage = PostgresStorage(
+    table_name="web_search_agent", db_url=db_url, auto_upgrade_schema=True
+)
 
 
 def get_web_search_agent(

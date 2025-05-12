@@ -3,7 +3,7 @@ from typing import Iterator, Optional
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
-from agno.storage.workflow.postgres import PostgresWorkflowStorage
+from agno.storage.postgres import PostgresStorage
 from agno.tools.googlesearch import GoogleSearchTools
 from agno.utils.log import logger
 from agno.workflow import RunEvent, RunResponse, Workflow
@@ -186,7 +186,7 @@ class StartupIdeaValidator(Workflow):
 def get_startup_idea_validator(debug_mode: bool = False) -> StartupIdeaValidator:
     return StartupIdeaValidator(
         workflow_id="validate-startup-idea",
-        storage=PostgresWorkflowStorage(
+        storage=PostgresStorage(
             table_name="startup_idea_validator_workflows",
             db_url=db_url,
             auto_upgrade_schema=True,
