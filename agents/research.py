@@ -5,12 +5,12 @@ from datetime import datetime
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.exa import ExaTools
-from agno.storage.agent.postgres import PostgresAgentStorage
+from agno.storage.postgres import PostgresStorage
 
 from agents.settings import agent_settings
 from db.session import db_url
 
-research_agent_storage = PostgresAgentStorage(table_name="research_agent", db_url=db_url, auto_upgrade_schema=True)
+research_agent_storage = PostgresStorage(table_name="research_agent", db_url=db_url, auto_upgrade_schema=True)
 
 
 def get_research_agent(

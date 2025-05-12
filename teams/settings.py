@@ -1,20 +1,18 @@
 from pydantic_settings import BaseSettings
 
 
-class AgentSettings(BaseSettings):
-    """Agent settings that can be set using environment variables.
+class TeamSettings(BaseSettings):
+    """Team settings that can be set using environment variables.
 
     Reference: https://pydantic-docs.helpmanual.io/usage/settings/
     """
 
+    gpt_4_mini: str = "gpt-4o-mini"
     gpt_4: str = "gpt-4o"
-    gpt_4o_mini: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-small"
     default_max_completion_tokens: int = 16000
     default_temperature: float = 0
 
-    claude_3_7_sonnet: str = "claude-3-7-sonnet-latest"
 
-
-# Create an AgentSettings object
-agent_settings = AgentSettings()
+# Create an TeamSettings object
+team_settings = TeamSettings()

@@ -4,13 +4,13 @@ from textwrap import dedent
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.yfinance import YFinanceTools
-from agno.storage.agent.postgres import PostgresAgentStorage
+from agno.storage.postgres import PostgresStorage
 
 from agents.settings import agent_settings
 from db.session import db_url
 
 
-finance_agent_storage = PostgresAgentStorage(table_name="finance_agent", db_url=db_url, auto_upgrade_schema=True)
+finance_agent_storage = PostgresStorage(table_name="finance_agent", db_url=db_url, auto_upgrade_schema=True)
 
 
 def get_finance_agent(
