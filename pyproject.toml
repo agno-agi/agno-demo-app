@@ -7,7 +7,7 @@ authors = [{ name = "Agno Team", email = "hello@agno.com" }]
 
 dependencies = [
   "anthropic",
-  "agno[aws]==1.4.6",
+  "agno[aws]==1.5.6",
   "alembic",
   "beautifulsoup4",
   "duckdb",
