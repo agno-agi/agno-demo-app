@@ -14,6 +14,7 @@ class AgentSettings(BaseSettings):
     default_temperature: float = 0
 
     claude_3_7_sonnet: str = "claude-3-7-sonnet-latest"
+    claude_4_sonnet: str = "claude-sonnet-4-20250514"
 
 
 # Create an AgentSettings object

@@ -19,14 +19,14 @@ PRD_KEY = f"{WS_NAME}-{PRD_ENV}"
 # Region for AWS resources
 AWS_REGION = "us-east-1"
 # AWS profile for the ai-demos account
-AWS_PROFILE = "ai-demos"
+AWS_PROFILE = "phidata"
 
 # Availability Zones for AWS resources
 AWS_AZ1 = "us-east-1a"
 AWS_AZ2 = "us-east-1b"
 
 # Subnet IDs in the aws_region
-SUBNET_IDS = ["subnet-067b9140c018160f6", "subnet-0f3ba3094301af603"]
+SUBNET_IDS = ["subnet-0aebed09ea7c82a5f", "subnet-0d53d74c0bb98ac9d"]
 
 # Image Settings
 # Repository for images

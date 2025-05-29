@@ -87,6 +87,7 @@ prd_lb_sg = SecurityGroup(
     ],
     skip_delete=skip_delete,
     save_output=save_output,
+    subnets=SUBNET_IDS
 )
 # -*- Security Group for the application
 prd_sg = SecurityGroup(
@@ -104,6 +105,7 @@ prd_sg = SecurityGroup(
     depends_on=[prd_lb_sg],
     skip_delete=skip_delete,
     save_output=save_output,
+    subnets=SUBNET_IDS
 )
 # -*- Security Group for the database
 prd_db_port = 5432
@@ -122,6 +124,7 @@ prd_db_sg = SecurityGroup(
     depends_on=[prd_sg],
     skip_delete=skip_delete,
     save_output=save_output,
+    subnets=SUBNET_IDS
 )
 
 # -*- RDS Database Subnet Group
@@ -200,7 +203,7 @@ prd_fastapi = FastApi(
     security_groups=[prd_sg],
     # To enable HTTPS, create an ACM certificate and add the ARN below:
     load_balancer_enable_https=True,
-    load_balancer_certificate_arn="arn:aws:acm:us-east-1:497891874516:certificate/e822946f-02c9-4ed1-8177-97ef2f4f5b72",
+    load_balancer_certificate_arn="arn:aws:acm:us-east-1:386435111151:certificate/1647dbab-2573-435c-becc-1f9418e1c610",
     load_balancer_security_groups=[prd_lb_sg],
     create_load_balancer=True,
     health_check_path="/v1/health",

@@ -20,7 +20,7 @@ def get_reasoning_agent(
     debug_mode: bool = False,
 ) -> Agent:
     return Agent(
-        model=Claude(id=agent_settings.claude_3_7_sonnet),
+        model=Claude(id=agent_settings.claude_4_sonnet),
         tools=[
             ReasoningTools(add_instructions=True),
         ],
