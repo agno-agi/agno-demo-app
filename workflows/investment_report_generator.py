@@ -1,12 +1,12 @@
 from textwrap import dedent
-from typing import Iterator
+from typing import Iterator, Union
 
-from agno.agent import Agent, RunResponse
+from agno.agent import Agent, RunResponse, RunResponseEvent
 from agno.models.openai import OpenAIChat
 from agno.storage.postgres import PostgresStorage
 from agno.tools.yfinance import YFinanceTools
 from agno.utils.log import logger
-from agno.workflow import Workflow
+from agno.workflow import Workflow, WorkflowCompletedEvent
 
 from workflows.settings import workflow_settings
 from db.session import db_url
@@ -121,11 +121,15 @@ class InvestmentReportGenerator(Workflow):
         """),
     )
 
-    def run(self, companies: str) -> Iterator[RunResponse]:  # type: ignore
+    def run(self, companies: str) -> Iterator[Union[WorkflowCompletedEvent, RunResponseEvent]]:  # type: ignore
         logger.info(f"Getting investment reports for companies: {companies}")
+
+        if self.run_id is None:
+            raise ValueError("Run ID is not set")
+
         initial_report: RunResponse = self.stock_analyst.run(companies)
         if initial_report is None or not initial_report.content:
-            yield RunResponse(
+            yield WorkflowCompletedEvent(
                 run_id=self.run_id,
                 content="Sorry, could not get the stock analyst report.",
             )
@@ -134,7 +138,10 @@ class InvestmentReportGenerator(Workflow):
         logger.info("Ranking companies based on investment potential.")
         ranked_companies: RunResponse = self.research_analyst.run(initial_report.content)
         if ranked_companies is None or not ranked_companies.content:
-            yield RunResponse(run_id=self.run_id, content="Sorry, could not get the ranked companies.")
+            yield WorkflowCompletedEvent(
+                run_id=self.run_id,
+                content="Sorry, could not get the ranked companies.",
+            )
             return
 
         logger.info("Reviewing the research report and producing an investment proposal.")

@@ -28,6 +28,7 @@ web_search_agent = get_web_search_agent(debug_mode=True)
 basic_agent = get_basic_agent(debug_mode=True)
 memory_agent = get_memory_agent(debug_mode=True)
 reasoning_agent = get_reasoning_agent(debug_mode=True)
+
 blog_post_generator = get_blog_post_generator(debug_mode=True)
 investment_report_generator = get_investment_report_generator(debug_mode=True)
 startup_idea_validator = get_startup_idea_validator(debug_mode=True)
@@ -43,6 +44,6 @@ playground = Playground(
 )
 # Log the playground endpoint with app.agno.com
 if getenv("RUNTIME_ENV") == "dev":
-    playground.create_endpoint("http://localhost:8000")
+    playground.register_app_on_platform()
 
 playground_router = playground.get_router()

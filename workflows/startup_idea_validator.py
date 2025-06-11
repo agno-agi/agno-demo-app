@@ -6,7 +6,7 @@ from agno.models.openai import OpenAIChat
 from agno.storage.postgres import PostgresStorage
 from agno.tools.googlesearch import GoogleSearchTools
 from agno.utils.log import logger
-from agno.workflow import RunEvent, RunResponse, Workflow
+from agno.workflow import RunResponse, Workflow, WorkflowCompletedEvent
 from pydantic import BaseModel, Field
 
 from workflows.settings import workflow_settings
@@ -142,15 +142,18 @@ class StartupIdeaValidator(Workflow):
 
         return None
 
-    def run(self, startup_idea: str) -> Iterator[RunResponse]:  # type: ignore
+    def run(self, startup_idea: str) -> Iterator[WorkflowCompletedEvent]:  # type: ignore
         logger.info(f"Generating a startup validation report for: {startup_idea}")
+
+        if self.run_id is None:
+            raise ValueError("Run ID is not set")
 
         # Clarify and quantify the idea
         idea_clarification: Optional[IdeaClarification] = self.get_idea_clarification(startup_idea)
 
         if idea_clarification is None:
-            yield RunResponse(
-                event=RunEvent.workflow_completed,
+            yield WorkflowCompletedEvent(
+                run_id=self.run_id,
                 content=f"Sorry, could not even clarify the idea: {startup_idea}",
             )
             return
@@ -159,8 +162,8 @@ class StartupIdeaValidator(Workflow):
         market_research: Optional[MarketResearch] = self.get_market_research(startup_idea, idea_clarification)
 
         if market_research is None:
-            yield RunResponse(
-                event=RunEvent.workflow_completed,
+            yield WorkflowCompletedEvent(
+                run_id=self.run_id,
                 content="Market research failed",
             )
             return
@@ -180,7 +183,10 @@ class StartupIdeaValidator(Workflow):
             )
         )
 
-        yield RunResponse(content=final_response.content, event=RunEvent.workflow_completed)
+        yield WorkflowCompletedEvent(
+            run_id=self.run_id,
+            content=final_response.content,
+        )
 
 
 def get_startup_idea_validator(debug_mode: bool = False) -> StartupIdeaValidator:

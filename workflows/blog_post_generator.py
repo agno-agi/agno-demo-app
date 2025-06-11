@@ -1,14 +1,14 @@
 import json
 from textwrap import dedent
-from typing import Dict, Iterator, Optional
+from typing import Dict, Iterator, Optional, Union
 
-from agno.agent import Agent
+from agno.agent import Agent, RunResponseEvent
 from agno.models.openai import OpenAIChat
 from agno.storage.postgres import PostgresStorage
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.newspaper4k import Newspaper4kTools
 from agno.utils.log import logger
-from agno.workflow import RunEvent, RunResponse, Workflow
+from agno.workflow import RunResponse, Workflow, WorkflowCompletedEvent
 from pydantic import BaseModel, Field
 from db.session import db_url
 from workflows.settings import workflow_settings
@@ -180,22 +180,25 @@ class BlogPostGenerator(Workflow):
         use_search_cache: bool = True,
         use_scrape_cache: bool = True,
         use_cached_report: bool = True,
-    ) -> Iterator[RunResponse]:
+    ) -> Iterator[Union[WorkflowCompletedEvent, RunResponseEvent]]:
         logger.info(f"Generating a blog post on: {topic}")
+
+        if self.run_id is None:
+            raise ValueError("Run ID is not set")
 
         # Use the cached blog post if use_cache is True
         if use_cached_report:
             cached_blog_post = self.get_cached_blog_post(topic)
             if cached_blog_post:
-                yield RunResponse(content=cached_blog_post, event=RunEvent.workflow_completed)
+                yield WorkflowCompletedEvent(run_id=self.run_id, content=cached_blog_post)
                 return
 
         # Search the web for articles on the topic
         search_results: Optional[SearchResults] = self.get_search_results(topic, use_search_cache)
         # If no search_results are found for the topic, end the workflow
         if search_results is None or len(search_results.articles) == 0:
-            yield RunResponse(
-                event=RunEvent.workflow_completed,
+            yield WorkflowCompletedEvent(
+                run_id=self.run_id,
                 content=f"Sorry, could not find any articles on the topic: {topic}",
             )
             return
@@ -329,7 +332,9 @@ class BlogPostGenerator(Workflow):
 
 
 # Run the workflow if the script is executed directly
-def write_blog_post(self, topic: str, scraped_articles: Dict[str, ScrapedArticle]) -> Iterator[RunResponse]:
+def write_blog_post(
+    self, topic: str, scraped_articles: Dict[str, ScrapedArticle]
+) -> Iterator[RunResponseEvent]:
     logger.info("Writing blog post")
     # Prepare the input for the writer
     writer_input = {

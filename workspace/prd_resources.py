@@ -87,7 +87,7 @@ prd_lb_sg = SecurityGroup(
     ],
     skip_delete=skip_delete,
     save_output=save_output,
-    subnets=SUBNET_IDS
+    subnets=SUBNET_IDS,
 )
 # -*- Security Group for the application
 prd_sg = SecurityGroup(
@@ -105,7 +105,7 @@ prd_sg = SecurityGroup(
     depends_on=[prd_lb_sg],
     skip_delete=skip_delete,
     save_output=save_output,
-    subnets=SUBNET_IDS
+    subnets=SUBNET_IDS,
 )
 # -*- Security Group for the database
 prd_db_port = 5432
@@ -124,7 +124,7 @@ prd_db_sg = SecurityGroup(
     depends_on=[prd_sg],
     skip_delete=skip_delete,
     save_output=save_output,
-    subnets=SUBNET_IDS
+    subnets=SUBNET_IDS,
 )
 
 # -*- RDS Database Subnet Group
