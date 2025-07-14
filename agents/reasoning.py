@@ -33,7 +33,7 @@ def get_reasoning_agent(
         markdown=True,
         storage=reasoning_agent_storage,
         add_history_to_messages=True,
-        num_history_responses=5,
+        num_history_runs=5,
         add_datetime_to_instructions=True,
         debug_mode=debug_mode,
     )
